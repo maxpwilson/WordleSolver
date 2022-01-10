@@ -1,0 +1,4 @@
+name = "WordleSolver"
+uuid = "dc98ed52-9c8e-43c1-bbdb-ab6e1906804a"
+authors = ["maxpwilson <48170841+maxpwilson@users.noreply.github.com>"]
+version = "0.1.0"
