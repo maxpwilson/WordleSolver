@@ -21,27 +21,46 @@ function manual_solve(total_tries)
         nextup_positional = sort(sorted, by=x->x[5])[1][1]
         println("Best guess: $nextup")
         println("Possible words: $(length(sorted))")
-        print("Guess: ")
-        g = readline()
-        filter!(i->i[1] != g, sorted)
-        print("Result: ")
-        r = readline()
+        if length(sorted) <= 10 && length(sorted) > 1
+            println("Type s to list all remaining words")
+        end
+        g = ""
+        while true
+            print("Guess: ")
+            g = readline()
+            if g == "s" 
+                for x in sorted
+                    println(x[1])
+                end
+                println("Best guess: $nextup")
+                println("Possible words: $(length(sorted))")
+            elseif replace(g, r"[a-z]"=>"") == "" && length(g) == 5
+                break
+            else
+                println("Invalid entry")
+            end
+        end
+        r = ""
+        while true
+            print("Result: ")
+            r = readline()
+            if length(replace(r, r"[^-+=]"=>"")) == 5
+                break
+            end
+            println("Bad Input")
+        end
         if r == "=====" || r == "y"
             println("Success in $(tries)!")
             break
         elseif r =="n"
             println("Word Not Found")
         else
-            if length(replace(r, r"[^-+=]"=>"")) != 5
-                println("Bad Input")
-                push!(sorted, nextup)
-                continue
-            end
             println("Filtering words...")
             words = filter_words(g, r, sorted)
             freqs = get_frequencies(words)
             sorted = sort_words(words, freqs)
         end
+        filter!(i->i[1] != g, sorted)
         tries += 1
     end
     
