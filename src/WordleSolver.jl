@@ -1,5 +1,6 @@
 module WordleSolver
 
+src = "$(@__DIR__)/.."
 
 function manual_solve(total_tries)
     sorted = load_presorted_dict()
@@ -67,7 +68,7 @@ function manual_solve(total_tries)
 end
 function load_dict()
     words = []
-    open("raw_dict_5.txt", "r") do r
+    open("$src/raw_dict_5.txt", "r") do r
         while !eof(r)
             word = readline(r)
             (length(word) == 5) && (push!(words, word))
@@ -77,7 +78,7 @@ function load_dict()
 end
 function load_presorted_dict()
     sorted = []
-    open("pre_sorted.txt", "r") do r
+    open("$src/pre_sorted.txt", "r") do r
         while !eof(r)
             line = readline(r)
             info = split(line, ",")
