@@ -4,6 +4,8 @@ module WordleSolver
 function manual_solve(total_tries)
     sorted = load_presorted_dict()
     sort!(sorted, by=x->x[6], rev=true)
+    println("Enter your guess in all lowercase letters")
+    println("Enter result with - for black, + for yellow, = for green, and n if the word is not in the official list")
     tries = 1
     while true
         if length(sorted) == 0
@@ -18,6 +20,7 @@ function manual_solve(total_tries)
         nextup_total = sort(sorted, by=x->x[4])[1][1]
         nextup_positional = sort(sorted, by=x->x[5])[1][1]
         println("Best guess: $nextup")
+        println("Possible words: $(length(sorted))")
         print("Guess: ")
         g = readline()
         filter!(i->i[1] != g, sorted)
@@ -68,14 +71,11 @@ function filter_words(guess, result, sorted)
     words = [i[1] for i in sorted]
     e = Dict()
     for i in 1:5
+        e[guess[i]] = []
         if result[i] == '='
-            if !(guess[i] in keys(e))
-                e[guess[i]] = [i]
-            else
-                push!(e[guess[i]], i)
-            end
+            push!(e[guess[i]], i)
         end
-    end
+    end 
     for j in 1:5
         letter = guess[j]
         if result[j] == '-'
@@ -89,7 +89,7 @@ function filter_words(guess, result, sorted)
                 filter!(i->!occursin(letter, i), words)
             end
         elseif result[j] == '+'
-            filter!(i->occursin(letter, i), words)
+            filter!(i->(length(collect(eachmatch(Regex(string(letter)), i)))==length(e[letter]) + 1), words)
             filter!(i->i[j] != letter, words)
         elseif result[j] == '='
             filter!(i->i[j] == letter, words)
