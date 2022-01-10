@@ -45,7 +45,7 @@ function manual_solve(total_tries)
         while true
             print("Result: ")
             r = readline()
-            if length(replace(r, r"[^-+=]"=>"")) == 5
+            if (length(replace(r, r"[^-+=]"=>"")) == 5) || (r == "n")
                 break
             end
             println("Bad Input")
@@ -55,13 +55,14 @@ function manual_solve(total_tries)
             break
         elseif r =="n"
             println("Word Not Found")
+            filter!(i->i[1] != g, sorted)
+            continue
         else
             println("Filtering words...")
             words = filter_words(g, r, sorted)
             freqs = get_frequencies(words)
             sorted = sort_words(words, freqs)
         end
-        filter!(i->i[1] != g, sorted)
         tries += 1
     end
     
