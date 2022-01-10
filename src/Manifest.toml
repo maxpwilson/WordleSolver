@@ -1,0 +1,9 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.7.1"
+manifest_format = "2.0"
+
+[[deps.WordleSolver]]
+path = ".."
+uuid = "dc98ed52-9c8e-43c1-bbdb-ab6e1906804a"
+version = "0.1.0"
