@@ -126,10 +126,10 @@ function get_frequencies(words)
         for word in words
             totals[word[i]] += 1
         end
-        freq = Dict([letter => totals[letter] / length(words) for letter in alphabet])
+        freq = Dict([letter => totals[letter] / length(filter(i->occursin(letter,i),words)) for letter in alphabet])
         freqs[i] = freq
     end
-    freqs["total"] = Dict([letter => sum([freqs[i][letter] for i in 1:5]) for letter in alphabet])
+    freqs["total"] = Dict([letter => length(filter(i->occursin(letter, i), words)) / length(words) for letter in alphabet])
     freqs
 end
 function score_total(word, freqs)
