@@ -56,6 +56,7 @@ function manual_solve(total_tries)
         elseif r =="n"
             println("Word Not Found")
             filter!(i->i[1] != g, sorted)
+            log_bad_word(g)
             continue
         else
             println("Filtering words...")
@@ -118,7 +119,18 @@ function filter_words(guess, result, sorted)
     end
     words
 end
-
+function log_bad_word(word)
+    open("$src/not_words.txt", "a") do io
+        println(io, word)
+    end
+end
+function print_bad_words()
+    open("$src/not_words.txt", "r") do io
+        while !eof(io)
+            println(readline(io))
+        end
+    end
+end
 function get_frequencies(words)
     freqs = Dict()
     alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -163,7 +175,9 @@ function rank_positional(word, scored_words)
     end
 end
 function rank_average(word, scored_words)
-    (rank_total(word, scored_words) + rank_positional(word, scored_words)) / 2
+    for (idx, word_info) in enumerate(sort(scored_words; by=x->(x[3] + x[2]), rev=true))
+        ((word_info[1]) == word) && (return idx)
+    end
 end
 function sort_words(words, freqs)
     scored = score_words(words, freqs)
