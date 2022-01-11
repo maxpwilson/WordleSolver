@@ -138,21 +138,30 @@ end
 function filter_words(guess, result, sorted)
     words = [i[1] for i in sorted]
     e = Dict()
+    p = Dict()
     for i in 1:5
         e[guess[i]] = []
+        p[guess[i]] = []
+    end
+    for i in 1:5
         if result[i] == '='
             push!(e[guess[i]], i)
+        elseif result[i] == '+'
+            push!(p[guess[i]], i)
         end
     end 
     for j in 1:5
         letter = guess[j]
         if result[j] == '-'
-            if letter in keys(e)
+            if length(e[letter]) > 0
                 for k in 1:5
                     if !(k in e[letter])
                         filter!(i->i[k] != letter, words)
                     end
                 end
+            elseif length(p[letter]) > 0
+                filter!(i->(length(collect(eachmatch(Regex(string(letter)), i)))==length(p[letter])), words)
+                filter!(i->i[j] != letter, words)
             else
                 filter!(i->!occursin(letter, i), words)
             end
