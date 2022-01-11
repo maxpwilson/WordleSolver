@@ -4,10 +4,20 @@ src = "$(@__DIR__)/.."
 
 function auto_solve(target)
     sorted = load_presorted_dict()
+    words = [i[1] for i in sorted]
     tries = 0
     while true
+        if !(target in words)
+            println("Target no longer in word list")
+            break
+        end
+        if length(sorted) == 0
+            println("No words remaining. Bot failed :(")
+            break
+        end
         tries += 1
         println("Attempt $(tries)")
+        println("Words remaining: $(length(sorted))")
         nextup = sort(sorted, by=x->x[6])[1][1]
         println("Attempting: $(nextup)")
         r = get_result(target, nextup)
@@ -56,8 +66,6 @@ function manual_solve(total_tries)
             break
         end
         nextup = sort(sorted, by=x->x[6])[1][1]
-        nextup_total = sort(sorted, by=x->x[4])[1][1]
-        nextup_positional = sort(sorted, by=x->x[5])[1][1]
         println("Best guess: $nextup")
         println("Possible words: $(length(sorted))")
         if length(sorted) <= 10 && length(sorted) > 1
@@ -149,7 +157,7 @@ function filter_words(guess, result, sorted)
                 filter!(i->!occursin(letter, i), words)
             end
         elseif result[j] == '+'
-            filter!(i->(length(collect(eachmatch(Regex(string(letter)), i)))==length(e[letter]) + 1), words)
+            filter!(i->(length(collect(eachmatch(Regex(string(letter)), i)))>=length(e[letter]) + 1), words)
             filter!(i->i[j] != letter, words)
         elseif result[j] == '='
             filter!(i->i[j] == letter, words)
