@@ -2,9 +2,42 @@ module WordleSolver
 
 src = "$(@__DIR__)/.."
 
-function auto_solve(word)
+function auto_solve(target)
     sorted = load_presorted_dict()
-    sort!(sorted, by=x->x[6], rev=true)
+    tries = 0
+    while true
+        tries += 1
+        println("Attempt $(tries)")
+        nextup = sort(sorted, by=x->x[6])[1][1]
+        println("Attempting: $(nextup)")
+        r = get_result(target, nextup)
+        println("Result    : $(r)")
+        if r == "====="
+            println("Success in $(tries) tries")
+            break
+        end
+        words = filter_words(nextup, r, sorted)
+        freqs = get_frequencies(words)
+        sorted = sort_words(words, freqs)
+    end
+end
+function get_result(target, guess)
+    r = "-----"
+    remaining_target = target
+    for i in 1:5
+        if target[i] == guess[i]
+            r = r[1:i-1] * '=' * r[i+1:5]
+            j = findfirst(guess[i], remaining_target)
+            remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
+        else
+            if occursin(guess[i:i], remaining_target)
+                r = r[1:i-1] * '+' * r[i+1:5]
+                j = findfirst(guess[i], remaining_target)
+                remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
+            end
+        end
+    end
+    r
 end
 
 function manual_solve(total_tries)
@@ -190,6 +223,6 @@ function sort_words(words, freqs)
     sort(sorted, by=x->x[6])
 end
 
-export manual_solve
+export manual_solve, auto_solve
 
 end # module
