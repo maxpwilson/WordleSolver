@@ -2,6 +2,11 @@ module WordleSolver
 
 src = "$(@__DIR__)/.."
 
+function auto_solve(word)
+    sorted = load_presorted_dict()
+    sort!(sorted, by=x->x[6], rev=true)
+end
+
 function manual_solve(total_tries)
     sorted = load_presorted_dict()
     sort!(sorted, by=x->x[6], rev=true)
@@ -139,7 +144,7 @@ function get_frequencies(words)
         for word in words
             totals[word[i]] += 1
         end
-        freq = Dict([letter => totals[letter] / length(filter(i->occursin(letter,i),words)) for letter in alphabet])
+        freq = Dict([letter => totals[letter] / length(words) for letter in alphabet])
         freqs[i] = freq
     end
     freqs["total"] = Dict([letter => length(filter(i->occursin(letter, i), words)) / length(words) for letter in alphabet])
