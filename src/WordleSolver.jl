@@ -2,34 +2,69 @@ module WordleSolver
 
 src = "$(@__DIR__)/.."
 
-function auto_solve(target)
+function auto_solve(target; verbose=true)
     sorted = load_presorted_dict()
+    sort!(sorted, by=x->x[6])
     words = [i[1] for i in sorted]
+    all_words = [i[1] for i in sorted]
     tries = 0
     while true
         if !(target in words)
-            println("Target no longer in word list")
+            (verbose == true) && println("Target no longer in word list")
+            tries = 7
             break
         end
         if length(sorted) == 0
-            println("No words remaining. Bot failed :(")
+            (verbose == true) && println("No words remaining. Bot failed :(")
+            tries = 7
             break
         end
         tries += 1
-        println("Attempt $(tries)")
-        println("Words remaining: $(length(sorted))")
+        (verbose == true) && println("Attempt $(tries)")
+        (verbose == true) && println("Words remaining: $(length(sorted))")
         nextup = sort(sorted, by=x->x[6])[1][1]
-        println("Attempting: $(nextup)")
+        (verbose == true) && println("Attempting: $(nextup)")
         r = get_result(target, nextup)
-        println("Result    : $(r)")
+        (verbose == true) && println("Result    : $(r)")
         if r == "====="
-            println("Success in $(tries) tries")
+            (verbose == true) && println("Success in $(tries) tries")
             break
         end
         words = filter_words(nextup, r, sorted)
         freqs = get_frequencies(words)
         sorted = sort_words(words, freqs)
     end
+    tries
+end
+function prune_dict()
+    words = load_dict()
+    mv("$(src)/raw_dict_5.txt", "$(src)/raw_dict_5_$(length(words)).old")
+    open("$(src)/not_words.txt", "r") do r
+        while !(eof(r))
+            line = readline(r)
+            filter!(i->i!=line, words)
+        end
+    end
+    open("$(src)/raw_dict_5.txt", "w") do io
+        for word in words
+            println(io, word)
+        end
+    end
+    words
+end
+function pre_sort_dict()
+    words = load_dict()
+    sorted = load_presorted_dict()
+    freqs = get_frequencies(words)
+    new_sorted = sort_words(words, freqs)
+    @assert (length(sorted) != length(new_sorted))
+    mv("$(src)/pre_sorted.txt", "$(src)/pre_sorted_$(length(sorted)).old")
+    open("$(src)/pre_sorted.txt", "w") do io
+        for word in new_sorted
+            println(io, word)
+        end
+    end
+    new_sorted
 end
 function get_result(target, guess)
     r = "-----"
@@ -39,12 +74,14 @@ function get_result(target, guess)
             r = r[1:i-1] * '=' * r[i+1:5]
             j = findfirst(guess[i], remaining_target)
             remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
-        else
-            if occursin(guess[i:i], remaining_target)
-                r = r[1:i-1] * '+' * r[i+1:5]
-                j = findfirst(guess[i], remaining_target)
-                remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
-            end
+            
+        end
+    end
+    for i in 1:5
+        if occursin(guess[i:i], remaining_target)
+            r = r[1:i-1] * '+' * r[i+1:5]
+            j = findfirst(guess[i], remaining_target)
+            remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
         end
     end
     r
@@ -102,7 +139,10 @@ function manual_solve(total_tries)
         elseif r =="n"
             println("Word Not Found")
             filter!(i->i[1] != g, sorted)
-            log_bad_word(g)
+            try
+                log_bad_word(g)
+            catch
+            end
             continue
         else
             println("Filtering words...")
@@ -186,9 +226,32 @@ function print_bad_words()
         end
     end
 end
+function naive_word_guess(words, alphabet)
+    guess = words[1]
+    for word in words
+        letters = [i for i in word]
+        guess_letters = [i for i in guess]
+        if length(intersect(alphabet, letters)) > length(intersect(alphabet, guess))
+            guess = word
+        end
+    end
+    guess
+end
+function create_alphabet(words)
+    unique(vcat([[i for i in word] for word in words]...))
+end
+function constant_letters(words)
+    constants = [i for i in words[1]]
+    for word in words[2:end]
+        letters = [i for i in word]
+        intersect!(constants, letters)
+    end
+    constants
+end
 function get_frequencies(words)
     freqs = Dict()
-    alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    alphabet = create_alphabet(words)
+   # alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     for i in 1:5
         totals = Dict([letter => 0 for letter in alphabet])
         for word in words

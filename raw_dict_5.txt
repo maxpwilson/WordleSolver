@@ -102,7 +102,6 @@ acerb
 aceta
 achar
 ached
-achen
 acher
 aches
 achoo
@@ -115,7 +114,6 @@ acyls
 acing
 acini
 ackee
-ackey
 acker
 aclys
 acmes
@@ -311,7 +309,6 @@ agrin
 agrom
 agron
 agsam
-aguey
 agues
 agura
 agush
@@ -387,7 +384,6 @@ akela
 akene
 aking
 akkad
-aknee
 aknow
 akpek
 akron
@@ -675,7 +671,6 @@ anise
 anita
 anjan
 anjou
-ankee
 anker
 ankhs
 ankle
@@ -1044,7 +1039,6 @@ audad
 audio
 audit
 aueto
-augen
 auger
 auget
 aught
@@ -1271,7 +1265,6 @@ balmy
 balms
 balon
 baloo
-balor
 balow
 balsa
 balti
@@ -1294,14 +1287,12 @@ bando
 bands
 baned
 banes
-banff
 banga
 bange
 bangy
 bangs
 bania
 banya
-banig
 banjo
 banky
 banks
@@ -5626,7 +5617,6 @@ getae
 getah
 getas
 getfd
-getic
 getid
 getup
 geums
@@ -7222,7 +7212,6 @@ jalap
 jalee
 jalet
 jalop
-jalor
 jalur
 jaman
 jambe
@@ -7306,7 +7295,6 @@ jetty
 jewed
 jewel
 jewis
-jewry
 jheel
 jhool
 jibba
@@ -9478,7 +9466,6 @@ naifs
 naily
 nails
 naira
-nairy
 naish
 naive
 naked
@@ -10418,7 +10405,6 @@ pechs
 pecht
 pecky
 pecks
-pecos
 pedal
 pedee
 pedes
@@ -13595,7 +13581,6 @@ sulla
 sully
 sumac
 sumak
-sumen
 summa
 sumos
 sumph
