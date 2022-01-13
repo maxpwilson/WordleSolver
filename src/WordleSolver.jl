@@ -74,7 +74,6 @@ function get_result(target, guess)
             r = r[1:i-1] * '=' * r[i+1:5]
             j = findfirst(guess[i], remaining_target)
             remaining_target = remaining_target[1:j-1] * remaining_target[j+1:end]
-            
         end
     end
     for i in 1:5
